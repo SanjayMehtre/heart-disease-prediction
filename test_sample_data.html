@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sample Data Test</title>
+</head>
+<body>
+    <h1>Sample Data Test</h1>
+    <button onclick="testSampleData()">Test Sample Data</button>
+    <div id="result"></div>
+    
+    <script>
+        // Sample data for testing (removed thal and cp)
+        const sampleData = {
+            age: 57,
+            sex: 1,
+            trestbps: 140,
+            chol: 192,
+            fbs: 0,
+            restecg: 1,
+            thalach: 148,
+            exang: 0,
+            oldpeak: 0.4,
+            slope: 1,
+            ca: 0
+        };
+        
+        function testSampleData() {
+            console.log("Sample data:", sampleData);
+            document.getElementById('result').innerHTML = JSON.stringify(sampleData, null, 2);
+        }
+    </script>
+</body>
+</html>

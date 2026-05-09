@@ -1,0 +1,6 @@
+Flask==2.3.2
+numpy==1.24.3
+pandas==1.5.3
+gunicorn==20.1.0
+boto3==1.26.137
+botocore==1.29.137
