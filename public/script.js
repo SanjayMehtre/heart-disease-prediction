@@ -93,7 +93,7 @@ function getFormData() {
 // Call backend API for heart disease prediction
 async function predictHeartDisease(data) {
     try {
-        const response = await fetch('/predict', {
+       const response = await fetch('https://kuvgdrcz5ntnpvb22bkyfyzr7y0yorwo.lambda-url.ap-south-1.on.aws/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
