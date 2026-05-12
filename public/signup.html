@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - MediCare Cardiac Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3B82F6;
+            --secondary-color: #10B981;
+            --accent-color: #F59E0B;
+            --danger-color: #EF4444;
+            --light-bg: #F9FAFB;
+            --card-bg: #FFFFFF;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --border-color: #E5E7EB;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .gradient-text {
+            background: linear-gradient(45deg, #3B82F6, #10B981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hover-scale {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hover-scale:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.45);
+        }
+
+        .form-input {
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-gradient {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            transition: all 0.3s ease;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 rgba(31, 38, 135, 0.3);
+        }
+
+        .pattern-bg {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4zm0-30V0h-2v4h-4v2h4v4h2V4h4V2h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .password-strength {
+            height: 4px;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .strength-weak { background: #EF4444; }
+        .strength-medium { background: #F59E0B; }
+        .strength-strong { background: #10B981; }
+    </style>
+</head>
+<body class="pattern-bg">
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="glass-morphism rounded-2xl p-8 w-full max-w-4xl">
+            <!-- Header -->
+            <header class="text-center mb-8">
+                <div class="flex justify-center items-center mb-4">
+                    <i class="fas fa-user-plus text-6xl text-blue-500"></i>
+                </div>
+                <h1 class="text-4xl font-bold text-white mb-2">Create Account</h1>
+                <p class="text-gray-200 text-lg">Join MediCare Cardiac Center for personalized heart health monitoring</p>
+            </header>
+
+            <!-- Signup Form -->
+            <main>
+                <form id="signupForm" class="space-y-6">
+                    <!-- Personal Information -->
+                    <section class="bg-white rounded-xl p-6 shadow-xl">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-user mr-3 text-blue-600"></i>
+                            Personal Information
+                        </h2>
+                        
+                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-id-card mr-1"></i>Full Name
+                                </label>
+                                <input type="text" name="fullName" required
+                                       class="form-input w-full px-4 py-2 rounded-lg focus:outline-none"
+                                       placeholder="John Doe">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-envelope mr-1"></i>Email Address
+                                </label>
+                                <input type="email" name="email" required
+                                       class="form-input w-full px-4 py-2 rounded-lg focus:outline-none"
+                                       placeholder="john.doe@example.com">
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-phone mr-1"></i>Phone Number
+                                </label>
+                                <input type="tel" name="phone" required
+                                       class="form-input w-full px-4 py-2 rounded-lg focus:outline-none"
+                                       placeholder="+1 (555) 123-4567">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-calendar mr-1"></i>Date of Birth
+                                </label>
+                                <input type="date" name="dateOfBirth" required
+                                       class="form-input w-full px-4 py-2 rounded-lg focus:outline-none">
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-3 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-venus-mars mr-1"></i>Sex
+                                </label>
+                                <select name="sex" required
+                                        class="form-input w-full px-4 py-2 rounded-lg focus:outline-none">
+                                    <option value="">Select Sex</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-ruler-vertical mr-1"></i>Height (cm)
+                                </label>
+                                <input type="number" name="height" required min="100" max="250"
+                                       class="form-input w-full px-4 py-2 rounded-lg focus:outline-none"
+                                       placeholder="170">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-weight mr-1"></i>Weight (kg)
+                                </label>
+                                <input type="number" name="weight" required min="30" max="300"
+                                       class="form-input w-full px-4 py-2 rounded-lg focus:outline-none"
+                                       placeholder="70">
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Medical Information -->
+                    <section class="bg-white rounded-xl p-6 shadow-xl">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-heartbeat mr-3 text-red-600"></i>
+                            Medical Information
+                        </h2>
+                        
+                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-procedures mr-1"></i>Existing Medical Conditions
+                                </label>
+                                <textarea name="medicalConditions" rows="3"
+                                          class="form-input w-full px-4 py-2 rounded-lg focus:outline-none"
+                                          placeholder="List any existing medical conditions..."></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-pills mr-1"></i>Current Medications
+                                </label>
+                                <textarea name="medications" rows="3"
+                                          class="form-input w-full px-4 py-2 rounded-lg focus:outline-none"
+                                          placeholder="List current medications..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-allergies mr-1"></i>Allergies
+                                </label>
+                                <textarea name="allergies" rows="2"
+                                          class="form-input w-full px-4 py-2 rounded-lg focus:outline-none"
+                                          placeholder="List any known allergies..."></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-user-md mr-1"></i>Primary Care Physician
+                                </label>
+                                <input type="text" name="primaryPhysician" required
+                                       class="form-input w-full px-4 py-2 rounded-lg focus:outline-none"
+                                       placeholder="Dr. Smith">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-notes-medical mr-1"></i>Additional Medical Notes
+                            </label>
+                            <textarea name="medicalNotes" rows="3"
+                                      class="form-input w-full px-4 py-2 rounded-lg focus:outline-none"
+                                      placeholder="Any additional medical information..."></textarea>
+                        </div>
+                    </section>
+
+                    <!-- Account Security -->
+                    <section class="bg-white rounded-xl p-6 shadow-xl">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-shield-alt mr-3 text-green-600"></i>
+                            Account Security
+                        </h2>
+                        
+                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-user mr-1"></i>Username
+                                </label>
+                                <input type="text" name="username" required
+                                       class="form-input w-full px-4 py-2 rounded-lg focus:outline-none"
+                                       placeholder="johndoe123">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-lock mr-1"></i>Password
+                                </label>
+                                <input type="password" name="password" required id="password"
+                                       class="form-input w-full px-4 py-2 rounded-lg focus:outline-none"
+                                       placeholder="Enter secure password"
+                                       oninput="checkPasswordStrength(this.value)">
+                                <div id="passwordStrength" class="password-strength mt-2"></div>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-lock mr-1"></i>Confirm Password
+                                </label>
+                                <input type="password" name="confirmPassword" required
+                                       class="form-input w-full px-4 py-2 rounded-lg focus:outline-none"
+                                       placeholder="Re-enter password">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-question mr-1"></i>Security Question
+                                </label>
+                                <select name="securityQuestion" required
+                                        class="form-input w-full px-4 py-2 rounded-lg focus:outline-none">
+                                    <option value="">Select a question</option>
+                                    <option value="pet">What was your first pet's name?</option>
+                                    <option value="school">What elementary school did you attend?</option>
+                                    <option value="city">In what city were you born?</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-key mr-1"></i>Security Answer
+                            </label>
+                            <input type="text" name="securityAnswer" required
+                                   class="form-input w-full px-4 py-2 rounded-lg focus:outline-none"
+                                   placeholder="Your security answer">
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="flex items-center">
+                                <input type="checkbox" name="terms" required class="mr-2">
+                                <span class="text-sm text-gray-700">
+                                    I agree to the <a href="#" class="text-blue-600 hover:underline">Terms of Service</a> 
+                                    and <a href="#" class="text-blue-600 hover:underline">Privacy Policy</a>
+                                </span>
+                            </label>
+                        </div>
+                    </section>
+
+                    <!-- Submit Button -->
+                    <div class="flex justify-center">
+                        <button type="submit" 
+                                class="btn-gradient text-white font-bold py-3 px-8 rounded-lg text-lg hover-scale">
+                            <i class="fas fa-user-plus mr-2"></i>
+                            Create Account
+                        </button>
+                    </div>
+                </form>
+            </main>
+
+            <!-- Footer -->
+            <footer class="text-center mt-8 pt-6 border-t border-gray-200">
+                <p class="text-gray-300 mb-2">
+                    <i class="fas fa-copyright mr-1"></i>2024 MediCare Cardiac Center. All rights reserved.
+                </p>
+                <div class="flex justify-center space-x-4 text-sm">
+                    <a href="/" class="text-gray-400 hover:text-white transition">
+                        <i class="fas fa-home mr-1"></i>Back to Home
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="fas fa-shield-alt mr-1"></i>Privacy Policy
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="fas fa-file-medical mr-1"></i>Medical Disclaimer
+                    </a>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Password strength checker
+        function checkPasswordStrength(password) {
+            const strengthBar = document.getElementById('passwordStrength');
+            let strength = 0;
+            
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]+/)) strength++;
+            if (password.match(/[A-Z]+/)) strength++;
+            if (password.match(/[0-9]+/)) strength++;
+            if (password.match(/[$@#&!]+/)) strength++;
+            
+            strengthBar.className = 'password-strength mt-2';
+            
+            if (strength <= 2) {
+                strengthBar.classList.add('strength-weak');
+            } else if (strength === 3) {
+                strengthBar.classList.add('strength-medium');
+            } else {
+                strengthBar.classList.add('strength-strong');
+            }
+        }
+
+        // Form validation and submission
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Basic validation
+            const password = document.querySelector('[name="password"]').value;
+            const confirmPassword = document.querySelector('[name="confirmPassword"]').value;
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+            
+            if (password.length < 8) {
+                alert('Password must be at least 8 characters long!');
+                return;
+            }
+            
+            // Show success message
+            alert('Account created successfully! You will be redirected to the login page.');
+            
+            // Redirect to home page
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 2000);
+        });
+
+        // Add input animations
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('transform', 'scale-105');
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.classList.remove('transform', 'scale-105');
+            });
+        });
+    </script>
+</body>
+</html>

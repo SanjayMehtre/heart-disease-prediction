@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare Cardiac Center - Heart Disease Prediction</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3B82F6;
+            --secondary-color: #10B981;
+            --accent-color: #F59E0B;
+            --danger-color: #EF4444;
+            --light-bg: #F9FAFB;
+            --card-bg: #FFFFFF;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --border-color: #E5E7EB;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .gradient-text {
+            background: linear-gradient(45deg, #3B82F6, #10B981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hover-scale {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .hover-scale:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.45);
+        }
+
+        .medical-icon {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .form-input {
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-gradient {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            transition: all 0.3s ease;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 rgba(31, 38, 135, 0.3);
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result-card {
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pattern-bg {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V4h4V2h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body class="pattern-bg">
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="glass-morphism rounded-2xl p-8 w-full max-w-6xl">
+            <!-- Header -->
+            <header class="text-center mb-8">
+                <div class="flex justify-center items-center mb-4">
+                    <i class="fas fa-heartbeat text-6xl text-red-500 medical-icon"></i>
+                </div>
+                <h1 class="text-4xl font-bold text-white mb-2">MediCare Cardiac Center</h1>
+                <p class="text-gray-200 text-lg">Advanced Heart Disease Prediction System</p>
+                <div class="mt-4 flex justify-center space-x-4">
+                    <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm">
+                        <i class="fas fa-shield-alt mr-1"></i>AI-Powered
+                    </span>
+                    <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm">
+                        <i class="fas fa-cloud mr-1"></i>AWS Ready
+                    </span>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="grid lg:grid-cols-2 gap-8">
+                <!-- Form Section -->
+                <section class="bg-white rounded-xl p-6 shadow-xl">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                        <i class="fas fa-user-injured mr-3 text-blue-600"></i>
+                        Patient Assessment Form
+                    </h2>
+
+                    <form id="predictionForm" class="space-y-4">
+                        <!-- Personal Information -->
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-blue-800 mb-3 flex items-center">
+                                <i class="fas fa-user mr-2"></i>Personal Information
+                            </h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fas fa-id-card mr-1"></i>Full Name
+                                    </label>
+                                    <input type="text" name="name" required
+                                           class="form-input w-full px-4 py-2 rounded-lg focus:outline-none"
+                                           placeholder="Enter your full name">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fas fa-birthday-cake mr-1"></i>Age
+                                    </label>
+                                    <input type="number" name="age" required min="1" max="120"
+                                           class="form-input w-full px-4 py-2 rounded-lg focus:outline-none"
+                                           placeholder="Years">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Medical Information -->
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-green-800 mb-3 flex items-center">
+                                <i class="fas fa-heartbeat mr-2"></i>Medical Information
+                            </h3>
+                            
+                            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fas fa-venus-mars mr-1"></i>Sex
+                                    </label>
+                                    <select name="sex" required
+                                            class="form-input w-full px-4 py-2 rounded-lg focus:outline-none">
+                                        <option value="">Select Sex</option>
+                                        <option value="0">Female</option>
+                                        <option value="1">Male</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fas fa-tint mr-1"></i>Fasting Blood Sugar
+                                    </label>
+                                    <select name="fbs" required
+                                            class="form-input w-full px-4 py-2 rounded-lg focus:outline-none">
+                                        <option value="">Select</option>
+                                        <option value="0">Fasting BS < 120 mg/dl</option>
+                                        <option value="1">Fasting BS > 120 mg/dl</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fas fa-stethoscope mr-1"></i>Resting Blood Pressure
+                                    </label>
+                                    <input type="number" name="trestbps" required min="80" max="200"
+                                           class="form-input w-full px-4 py-2 rounded-lg focus:outline-none"
+                                           placeholder="mm Hg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fas fa-vial mr-1"></i>Serum Cholesterol
+                                    </label>
+                                    <input type="number" name="chol" required min="100" max="600"
+                                           class="form-input w-full px-4 py-2 rounded-lg focus:outline-none"
+                                           placeholder="mg/dl">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <i class="fas fa-heartbeat mr-1"></i>Maximum Heart Rate Achieved
+                                </label>
+                                <input type="number" name="thalach" required min="60" max="220"
+                                       class="form-input w-full px-4 py-2 rounded-lg focus:outline-none"
+                                       placeholder="bpm">
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="flex justify-center mt-6">
+                            <button type="submit" 
+                                    class="btn-gradient text-white font-bold py-3 px-8 rounded-lg text-lg hover-scale">
+                                <i class="fas fa-search mr-2"></i>
+                                Predict Heart Disease Risk
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Information Section -->
+                <section class="space-y-6">
+                    <!-- Features -->
+                    <div class="bg-white rounded-xl p-6 shadow-xl hover-scale">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-star mr-2 text-yellow-500"></i>
+                            Advanced Features
+                        </h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                <span class="text-gray-700">AI-powered risk assessment with confidence scores</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                <span class="text-gray-700">Personalized treatment recommendations</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                <span class="text-gray-700">Emergency care guidelines</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                <span class="text-gray-700">Lifestyle modification suggestions</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                <span class="text-gray-700">Follow-up care recommendations</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- About SDG 3 -->
+                    <div class="bg-white rounded-xl p-6 shadow-xl hover-scale">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-globe-americas mr-2 text-blue-600"></i>
+                            UN Sustainable Development Goal 3
+                        </h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            This application supports <strong>SDG 3: Good Health and Well-being</strong> by providing 
+                            accessible heart disease prediction services. Early detection and prevention of cardiovascular diseases 
+                            contribute to reducing premature mortality from non-communicable diseases, making quality healthcare 
+                            available to everyone regardless of their location or economic status.
+                        </p>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div class="bg-white rounded-xl p-6 shadow-xl hover-scale">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-link mr-2 text-purple-600"></i>
+                            Quick Links
+                        </h3>
+                        <div class="space-y-3">
+                            <a href="/signup" class="block w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-center">
+                                <i class="fas fa-user-plus mr-2"></i>Create Account
+                            </a>
+                            <button onclick="loadSampleData()" class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                                <i class="fas fa-database mr-2"></i>Load Sample Data
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Results Section (Initially Hidden) -->
+            <section id="resultsSection" class="hidden mt-8">
+                <div id="predictionResults" class="result-card">
+                    <!-- Results will be populated here -->
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="text-center mt-8 pt-6 border-t border-gray-200">
+                <p class="text-gray-300 mb-2">
+                    <i class="fas fa-copyright mr-1"></i>2024 MediCare Cardiac Center. All rights reserved.
+                </p>
+                <p class="text-gray-400 text-sm mb-2">
+                    Powered by <i class="fab fa-aws mr-1"></i>AWS SageMaker Machine Learning
+                </p>
+                <div class="flex justify-center space-x-4 text-sm">
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="fas fa-shield-alt mr-1"></i>Privacy Policy
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <i class="fas fa-file-medical mr-1"></i>Medical Disclaimer
+                    </a>
+                    <a href="/signup" class="text-gray-400 hover:text-white transition">
+                        <i class="fas fa-user-plus mr-1"></i>Sign Up
+                    </a>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
