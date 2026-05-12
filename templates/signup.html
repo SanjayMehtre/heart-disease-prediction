@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - MediCare Cardiac Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .input-group {
+            position: relative;
+        }
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+        }
+        .form-input {
+            padding-left: 45px;
+        }
+        .password-strength {
+            height: 4px;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        .strength-weak { background-color: #ef4444; width: 33%; }
+        .strength-medium { background-color: #f59e0b; width: 66%; }
+        .strength-strong { background-color: #10b981; width: 100%; }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <!-- Main Card -->
+        <div class="glass-effect rounded-2xl shadow-2xl p-8">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mb-4">
+                    <i class="fas fa-heartbeat text-white text-2xl"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">MediCare Cardiac Center</h1>
+                <p class="text-gray-600">Create your account for personalized heart health monitoring</p>
+            </div>
+
+            <!-- Signup Form -->
+            <form id="signupForm" class="space-y-6">
+                <!-- Personal Information -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-700 border-b pb-2">Personal Information</h3>
+                    
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="fullName" name="fullName" required
+                               class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               placeholder="Full Name">
+                    </div>
+
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" name="email" required
+                               class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               placeholder="Email Address">
+                    </div>
+
+                    <div class="input-group">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" id="phone" name="phone" required
+                               class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               placeholder="Phone Number">
+                    </div>
+
+                    <div class="input-group">
+                        <i class="fas fa-calendar"></i>
+                        <input type="date" id="dateOfBirth" name="dateOfBirth" required
+                               class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+
+                    <select id="gender" name="gender" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Medical Information -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-700 border-b pb-2">Medical Information</h3>
+                    
+                    <div class="input-group">
+                        <i class="fas fa-id-card"></i>
+                        <input type="text" id="medicalId" name="medicalId" required
+                               class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               placeholder="Medical ID Number">
+                    </div>
+
+                    <div class="input-group">
+                        <i class="fas fa-user-md"></i>
+                        <input type="text" id="primaryPhysician" name="primaryPhysician" required
+                               class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               placeholder="Primary Physician Name">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="input-group">
+                            <i class="fas fa-tint"></i>
+                            <input type="text" id="bloodType" name="bloodType" required
+                                   class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                   placeholder="Blood Type">
+                        </div>
+
+                        <div class="input-group">
+                            <i class="fas fa-allergies"></i>
+                            <input type="text" id="allergies" name="allergies"
+                                   class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                   placeholder="Allergies">
+                        </div>
+                    </div>
+
+                    <textarea id="medicalHistory" name="medicalHistory" rows="3"
+                              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                              placeholder="Brief Medical History (optional)"></textarea>
+                </div>
+
+                <!-- Account Security -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-700 border-b pb-2">Account Security</h3>
+                    
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" name="password" required
+                               class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               placeholder="Password">
+                    </div>
+                    <div id="passwordStrength" class="password-strength strength-weak"></div>
+
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required
+                               class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               placeholder="Confirm Password">
+                    </div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="space-y-4">
+                    <label class="flex items-start space-x-3">
+                        <input type="checkbox" id="terms" name="terms" required
+                               class="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                        <span class="text-sm text-gray-600">
+                            I agree to the <a href="#" class="text-blue-600 hover:underline">Terms and Conditions</a> 
+                            and <a href="#" class="text-blue-600 hover:underline">Privacy Policy</a>
+                        </span>
+                    </label>
+
+                    <label class="flex items-start space-x-3">
+                        <input type="checkbox" id="newsletter" name="newsletter"
+                               class="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                        <span class="text-sm text-gray-600">
+                            Send me health tips and updates via email
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" 
+                        class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200">
+                    <i class="fas fa-user-plus mr-2"></i>
+                    Create Account
+                </button>
+
+                <!-- Login Link -->
+                <div class="text-center">
+                    <p class="text-sm text-gray-600">
+                        Already have an account? 
+                        <a href="index.html" class="text-blue-600 hover:underline font-semibold">Sign In</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+
+        <!-- Success Message (Hidden by default) -->
+        <div id="successMessage" class="hidden glass-effect rounded-2xl shadow-2xl p-8 text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+                <i class="fas fa-check-circle text-green-600 text-2xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Account Created Successfully!</h2>
+            <p class="text-gray-600 mb-6">Welcome to MediCare Cardiac Center. Your account has been created successfully.</p>
+            <button onclick="window.location.href='index.html'" 
+                    class="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200">
+                <i class="fas fa-heartbeat mr-2"></i>
+                Go to Dashboard
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 flex items-center space-x-4">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <span class="text-gray-700">Creating your account...</span>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Show loading
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+            
+            // Get form data
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            
+            // Validate passwords match
+            if (data.password !== data.confirmPassword) {
+                alert('Passwords do not match!');
+                document.getElementById('loadingOverlay').classList.add('hidden');
+                return;
+            }
+            
+            // Validate password strength
+            if (data.password.length < 8) {
+                alert('Password must be at least 8 characters long!');
+                document.getElementById('loadingOverlay').classList.add('hidden');
+                return;
+            }
+            
+            // Simulate API call (replace with actual backend call)
+            setTimeout(() => {
+                // Hide loading
+                document.getElementById('loadingOverlay').classList.add('hidden');
+                
+                // Show success message
+                document.getElementById('signupForm').parentElement.classList.add('hidden');
+                document.getElementById('successMessage').classList.remove('hidden');
+                
+                // Store user data (in real app, this would be server-side)
+                localStorage.setItem('user', JSON.stringify({
+                    fullName: data.fullName,
+                    email: data.email,
+                    phone: data.phone,
+                    dateOfBirth: data.dateOfBirth,
+                    gender: data.gender,
+                    medicalId: data.medicalId,
+                    primaryPhysician: data.primaryPhysician,
+                    bloodType: data.bloodType,
+                    allergies: data.allergies,
+                    medicalHistory: data.medicalHistory,
+                    signupDate: new Date().toISOString()
+                }));
+                
+            }, 2000);
+        });
+        
+        // Password strength checker
+        document.getElementById('password').addEventListener('input', function(e) {
+            const password = e.target.value;
+            const strengthBar = document.getElementById('passwordStrength');
+            
+            if (password.length === 0) {
+                strengthBar.className = 'password-strength';
+                return;
+            }
+            
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]/)) strength++;
+            if (password.match(/[A-Z]/)) strength++;
+            if (password.match(/[0-9]/)) strength++;
+            if (password.match(/[^a-zA-Z0-9]/)) strength++;
+            
+            if (strength <= 2) {
+                strengthBar.className = 'password-strength strength-weak';
+            } else if (strength <= 4) {
+                strengthBar.className = 'password-strength strength-medium';
+            } else {
+                strengthBar.className = 'password-strength strength-strong';
+            }
+        });
+        
+        // Set max date to today (for date of birth)
+        document.getElementById('dateOfBirth').max = new Date().toISOString().split('T')[0];
+    </script>
+</body>
+</html>

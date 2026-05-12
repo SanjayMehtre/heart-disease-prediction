@@ -110,15 +110,17 @@ async function predictHeartDisease(data) {
             throw new Error(result.error || 'Prediction failed');
         }
         
-        const prediction = result.prediction;
+        console.log('Prediction result:', result); // Debug log
         
         return {
-            riskScore: prediction.risk_score,
-            prediction: prediction.prediction,
-            confidence: prediction.confidence,
-            riskLevel: getRiskLevel(prediction.risk_score),
-            recommendations: prediction.recommendations,
-            aiTreatmentPlan: prediction.ai_treatment_plan
+            riskScore: result.risk_score,
+            prediction: result.prediction,
+            confidence: result.confidence,
+            riskLevel: getRiskLevel(result.risk_score),
+            recommendations: result.recommendations || [],
+            aiTreatmentPlan: result.ai_treatment_plan || {},
+            usingSageMaker: result.using_sagemaker || false,
+            modelInfo: result.model_info || {}
         };
         
     } catch (error) {
@@ -186,6 +188,7 @@ function displayResults(prediction, formData) {
                     <i class="fas fa-user-injured mr-2"></i>Patient Assessment Report
                 </h3>
                 <p class="text-lg text-gray-600">Name: <strong>${formData.name}</strong></p>
+                ${prediction.usingSageMaker ? '<p class="text-sm text-green-600"><i class="fas fa-cloud mr-1"></i>Powered by AWS SageMaker</p>' : '<p class="text-sm text-yellow-600"><i class="fas fa-laptop mr-1"></i>Using Local Model</p>'}
             </div>
             <div class="text-6xl mb-4 text-${riskLevel.color}-500">
                 <i class="fas ${riskLevel.icon}"></i>
@@ -215,7 +218,7 @@ function displayResults(prediction, formData) {
                         <i class="fas fa-exclamation-triangle mr-2"></i>Immediate Actions
                     </h4>
                     <ul class="space-y-2 text-sm">
-                        ${prediction.aiTreatmentPlan.immediate_actions.map(action => 
+                        ${(prediction.aiTreatmentPlan.recommendations || []).slice(0, 5).map(action => 
                             `<li class="flex items-start">
                                 <i class="fas fa-chevron-right text-red-500 mt-1 mr-2 text-xs"></i>
                                 <span>${action}</span>
@@ -230,25 +233,10 @@ function displayResults(prediction, formData) {
                         <i class="fas fa-heart mr-2"></i>Lifestyle Modifications
                     </h4>
                     <ul class="space-y-2 text-sm">
-                        ${prediction.aiTreatmentPlan.lifestyle_modifications.map(mod => 
+                        ${(prediction.aiTreatmentPlan.lifestyle_changes || []).map(mod => 
                             `<li class="flex items-start">
                                 <i class="fas fa-chevron-right text-green-500 mt-1 mr-2 text-xs"></i>
                                 <span>${mod}</span>
-                            </li>`
-                        ).join('')}
-                    </ul>
-                </div>
-                
-                <!-- Medication Recommendations -->
-                <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
-                    <h4 class="font-semibold mb-3 text-blue-800">
-                        <i class="fas fa-pills mr-2"></i>Medication Recommendations
-                    </h4>
-                    <ul class="space-y-2 text-sm">
-                        ${prediction.aiTreatmentPlan.medication_recommendations.map(med => 
-                            `<li class="flex items-start">
-                                <i class="fas fa-chevron-right text-blue-500 mt-1 mr-2 text-xs"></i>
-                                <span>${med}</span>
                             </li>`
                         ).join('')}
                     </ul>
@@ -260,37 +248,20 @@ function displayResults(prediction, formData) {
                         <i class="fas fa-chart-line mr-2"></i>Monitoring Plan
                     </h4>
                     <ul class="space-y-2 text-sm">
-                        ${prediction.aiTreatmentPlan.monitoring_plan.map(monitor => 
-                            `<li class="flex items-start">
-                                <i class="fas fa-chevron-right text-yellow-500 mt-1 mr-2 text-xs"></i>
-                                <span>${monitor}</span>
-                            </li>`
-                        ).join('')}
+                        <li class="flex items-start">
+                            <i class="fas fa-chevron-right text-yellow-500 mt-1 mr-2 text-xs"></i>
+                            <span>${prediction.aiTreatmentPlan.follow_up || 'Follow up with healthcare provider in 3 months'}</span>
+                        </li>
                     </ul>
                 </div>
                 
-                <!-- Follow-up Care -->
-                <div class="bg-purple-50 rounded-lg p-4 border-l-4 border-purple-500">
-                    <h4 class="font-semibold mb-3 text-purple-800">
-                        <i class="fas fa-calendar-check mr-2"></i>Follow-up Care
-                    </h4>
-                    <ul class="space-y-2 text-sm">
-                        ${prediction.aiTreatmentPlan.follow_up_care.map(follow => 
-                            `<li class="flex items-start">
-                                <i class="fas fa-chevron-right text-purple-500 mt-1 mr-2 text-xs"></i>
-                                <span>${follow}</span>
-                            </li>`
-                        ).join('')}
-                    </ul>
-                </div>
-                
-                <!-- Emergency Indicators -->
+                <!-- Emergency Contacts -->
                 <div class="bg-red-100 rounded-lg p-4 border-l-4 border-red-600">
                     <h4 class="font-semibold mb-3 text-red-900">
-                        <i class="fas fa-ambulance mr-2"></i>Emergency Indicators
+                        <i class="fas fa-ambulance mr-2"></i>Emergency Contacts
                     </h4>
                     <ul class="space-y-2 text-sm">
-                        ${prediction.aiTreatmentPlan.emergency_indicators.map(emergency => 
+                        ${(prediction.aiTreatmentPlan.emergency_contacts || []).map(emergency => 
                             `<li class="flex items-start">
                                 <i class="fas fa-exclamation-circle text-red-600 mt-1 mr-2 text-xs"></i>
                                 <span class="font-semibold">${emergency}</span>
@@ -308,7 +279,7 @@ function displayResults(prediction, formData) {
                     <i class="fas fa-user-md mr-2"></i>Basic Medical Recommendations
                 </h4>
                 <ul class="space-y-2 text-left">
-                    ${prediction.recommendations.map(rec => 
+                    ${(prediction.recommendations || []).map(rec => 
                         `<li class="flex items-start">
                             <i class="fas fa-arrow-right text-blue-500 mt-1 mr-2"></i>
                             <span>${rec}</span>
@@ -330,6 +301,20 @@ function displayResults(prediction, formData) {
                 </div>
             </div>
         </div>
+        
+        <!-- Model Information -->
+        ${prediction.modelInfo && prediction.modelInfo.sagemaker_available ? `
+        <div class="bg-purple-50 rounded-lg p-4 mb-6">
+            <h4 class="font-semibold mb-3 text-purple-800">
+                <i class="fas fa-cloud mr-2"></i>Model Information
+            </h4>
+            <div class="text-left space-y-1 text-sm">
+                <p><strong>Model:</strong> AWS SageMaker</p>
+                <p><strong>Endpoint:</strong> ${prediction.modelInfo.endpoint_name || 'Not configured'}</p>
+                <p><strong>Region:</strong> ${prediction.modelInfo.region || 'Not configured'}</p>
+            </div>
+        </div>
+        ` : ''}
         
         <div class="bg-green-50 rounded-lg p-4">
             <h4 class="font-semibold mb-2 text-green-800">

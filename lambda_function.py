@@ -1,296 +1,109 @@
 import json
-import numpy as np
-import boto3
-from datetime import datetime
 import os
-
-# SageMaker configuration
-USE_SAGEMAKER = os.environ.get('USE_SAGEMAKER', 'false').lower() == 'true'
-SAGEMAKER_ENDPOINT = os.environ.get('SAGEMAKER_ENDPOINT', 'heart-disease-endpoint')
-
-def predict_heart_disease_sagemaker(features):
-    """
-    Call AWS SageMaker endpoint for prediction
-    """
-    try:
-        runtime = boto3.client('sagemaker-runtime')
-        
-        # Prepare payload for SageMaker
-        payload = {
-            "instances": [{"features": features}]
-        }
-        
-        # Call SageMaker endpoint
-        response = runtime.invoke_endpoint(
-            EndpointName=SAGEMAKER_ENDPOINT,
-            ContentType='application/json',
-            Body=json.dumps(payload)
-        )
-        
-        # Parse response
-        result = json.loads(response['Body'].read().decode())
-        prediction = result['predictions'][0]
-        
-        return {
-            'risk_score': float(prediction.get('predicted_probability', 0.5)),
-            'prediction': int(prediction.get('predicted_label', 0)),
-            'confidence': float(prediction.get('score', 0.5)),
-            'timestamp': datetime.now().isoformat(),
-            'source': 'sagemaker'
-        }
-        
-    except Exception as e:
-        print(f"SageMaker prediction failed: {e}")
-        # Fallback to local prediction
-        return predict_heart_disease_local(features)
-
-def predict_heart_disease_local(features):
-    """
-    Local prediction function (simplified heuristic)
-    Used as fallback when SageMaker is not available
-    """
-    # Extract features (removed thal, cp, restecg, oldpeak, slope, exang, ca)
-    age, sex, trestbps, chol, fbs, thalach = features
-    
-    # Simple risk calculation (for demonstration)
-    risk_score = 0
-    
-    # Age factor
-    if age > 55: risk_score += 0.2
-    if age > 65: risk_score += 0.1
-    
-    # Sex factor (male higher risk)
-    if sex == 1: risk_score += 0.1
-    
-    # Blood pressure
-    if trestbps > 140: risk_score += 0.2
-    if trestbps > 160: risk_score += 0.1
-    
-    # Cholesterol
-    if chol > 240: risk_score += 0.2
-    if chol > 300: risk_score += 0.1
-    
-    # Fasting blood sugar
-    if fbs == 1: risk_score += 0.1
-    
-    # Max heart rate (lower is riskier)
-    if thalach < 120: risk_score += 0.3
-    elif thalach < 140: risk_score += 0.2
-    
-    # Add some randomness for realism
-    risk_score += (np.random.random() - 0.5) * 0.1
-    
-    # Cap between 0 and 0.95 to prevent 100% risk
-    risk_score = max(0, min(0.95, risk_score))
-    
-    return {
-        'risk_score': float(risk_score),
-        'prediction': 1 if risk_score > 0.5 else 0,
-        'confidence': float(abs(risk_score - 0.5) * 2),
-        'timestamp': datetime.now().isoformat(),
-        'source': 'local'
-    }
-
-def get_risk_level(score):
-    """Get risk level based on score"""
-    if score < 0.3:
-        return {'level': 'Low', 'color': 'green', 'icon': 'fa-check-circle'}
-    elif score < 0.6:
-        return {'level': 'Moderate', 'color': 'yellow', 'icon': 'fa-exclamation-triangle'}
-    else:
-        return {'level': 'High', 'color': 'red', 'icon': 'fa-exclamation-circle'}
-
-def get_recommendations(score, features):
-    """Get medical recommendations based on risk and features"""
-    recommendations = []
-    age, sex, trestbps, chol, fbs, thalach = features
-    
-    if score > 0.5:
-        recommendations.append('Consult with a cardiologist for further evaluation')
-        recommendations.append('Consider comprehensive cardiac screening tests')
-    
-    if trestbps > 140:
-        recommendations.append('Monitor blood pressure regularly')
-        recommendations.append('Consider lifestyle modifications to reduce blood pressure')
-    
-    if chol > 240:
-        recommendations.append('Follow up with cholesterol management plan')
-        recommendations.append('Consider dietary changes to reduce cholesterol')
-        
-    if fbs == 1:
-        recommendations.append('Monitor blood sugar levels regularly')
-        recommendations.append('Consider diabetes management program')
-    
-    if len(recommendations) == 0:
-        recommendations.append('Continue regular health check-ups')
-        recommendations.append('Maintain healthy lifestyle habits')
-    
-    return recommendations
-
-def get_ai_treatment_plan(score, features):
-    """Generate AI-powered treatment recommendations based on risk assessment"""
-    age, sex, trestbps, chol, fbs, thalach = features
-    
-    treatment_plan = {
-        'immediate_actions': [],
-        'lifestyle_modifications': [],
-        'medication_recommendations': [],
-        'monitoring_plan': [],
-        'follow_up_care': [],
-        'emergency_indicators': []
-    }
-    
-    # Immediate Actions
-    if score > 0.7:
-        treatment_plan['immediate_actions'].extend([
-            'Seek immediate medical attention from emergency department',
-            'Call emergency services if experiencing chest pain, shortness of breath, or dizziness',
-            'Avoid any physical exertion until evaluated by healthcare provider'
-        ])
-    elif score > 0.5:
-        treatment_plan['immediate_actions'].extend([
-            'Schedule urgent appointment with cardiologist within 48 hours',
-            'Avoid strenuous activities until medical evaluation',
-            'Monitor vital signs (blood pressure, heart rate) twice daily'
-        ])
-    else:
-        treatment_plan['immediate_actions'].extend([
-            'Schedule routine check-up with primary care physician within 2 weeks',
-            'Continue normal activities with awareness of symptoms'
-        ])
-
-    # Lifestyle Modifications
-    if trestbps > 140:
-        treatment_plan['lifestyle_modifications'].extend([
-            'Adopt DASH (Dietary Approaches to Stop Hypertension) eating plan',
-            'Reduce sodium intake to less than 1,500 mg per day',
-            'Engage in moderate aerobic exercise (30 minutes, 5 days/week)',
-            'Practice stress reduction techniques (meditation, deep breathing)',
-            'Limit alcohol consumption to 1 drink/day for women, 2 for men'
-        ])
-
-    if chol > 240:
-        treatment_plan['lifestyle_modifications'].extend([
-            'Follow heart-healthy diet low in saturated and trans fats',
-            'Increase soluble fiber intake (oats, beans, apples, citrus)',
-            'Incorporate omega-3 fatty acids (fatty fish, walnuts, flaxseed)',
-            'Achieve and maintain healthy body weight (BMI 18.5-24.9)',
-            'Quit smoking if applicable'
-        ])
-
-    if age > 65:
-        treatment_plan['lifestyle_modifications'].extend([
-            'Consider low-impact exercises (swimming, walking, tai chi)',
-            'Ensure adequate calcium and vitamin D intake',
-            'Participate in regular balance and strength training'
-        ])
-
-    # Medication Recommendations
-    if score > 0.6:
-        treatment_plan['medication_recommendations'].extend([
-            'Physician may consider statin therapy for cholesterol management',
-            'Blood pressure medications may be prescribed (ACE inhibitors, beta-blockers)',
-            'Aspirin therapy may be considered for cardiovascular prevention',
-            'Note: All medications require prescription and medical supervision'
-        ])
-    elif trestbps > 140:
-        treatment_plan['medication_recommendations'].extend([
-            'Antihypertensive medications may be prescribed',
-            'Regular medication adherence monitoring required'
-        ])
-
-    if fbs == 1:
-        treatment_plan['medication_recommendations'].extend([
-            'Diabetes medications may be prescribed if diabetic',
-            'Regular blood glucose monitoring essential'
-        ])
-
-    # Monitoring Plan
-    treatment_plan['monitoring_plan'].extend([
-        'Daily blood pressure monitoring (morning and evening)',
-        'Weekly weight tracking to detect fluid retention',
-        'Monthly cholesterol level checks if elevated',
-        'Keep symptom diary noting chest pain, shortness of breath, fatigue'
-    ])
-
-    if score > 0.5:
-        treatment_plan['monitoring_plan'].extend([
-            'Consider home ECG monitoring if recommended by physician',
-            'Regular heart rate variability monitoring',
-            'Blood sugar monitoring if diabetic or pre-diabetic'
-        ])
-
-    # Follow-up Care
-    if score > 0.7:
-        treatment_plan['follow_up_care'].extend([
-            'Cardiology follow-up within 1 week',
-            'Possible cardiac stress test or echocardiogram',
-            'Consider cardiac catheterization if indicated',
-            'Referral to cardiac rehabilitation program'
-        ])
-    elif score > 0.5:
-        treatment_plan['follow_up_care'].extend([
-            'Cardiology follow-up within 4-6 weeks',
-            'Baseline cardiac workup (ECG, blood tests)',
-            'Consider stress testing based on symptoms'
-        ])
-    else:
-        treatment_plan['follow_up_care'].extend([
-            'Primary care follow-up within 3 months',
-            'Annual cardiac screening',
-            'Preventive health maintenance'
-        ])
-
-    # Emergency Indicators
-    treatment_plan['emergency_indicators'].extend([
-        'Chest pain or pressure lasting more than 5 minutes',
-        'Shortness of breath at rest or with minimal activity',
-        'Pain radiating to arm, jaw, neck, or back',
-        'Cold sweat, nausea, or lightheadedness',
-        'Irregular or rapid heartbeat',
-        'Sudden severe headache or vision changes'
-    ])
-
-    return treatment_plan
+import boto3
+import numpy as np
+import pandas as pd
 
 def lambda_handler(event, context):
-    """Main Lambda handler function"""
+    """AWS Lambda function for heart disease prediction"""
+    
     try:
-        # Log the incoming request
-        print(f"Received event: {event}")
+        # Parse request body
+        body = json.loads(event.get('body', '{}'))
         
-        # Get JSON data from request
-        if 'body' in event:
-            data = json.loads(event['body'])
+        # Validate required fields
+        required_fields = ['name', 'age', 'sex', 'trestbps', 'chol', 'fbs', 'thalach']
+        for field in required_fields:
+            if field not in body:
+                return {
+                    'statusCode': 400,
+                    'headers': {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Headers': 'Content-Type',
+                        'Access-Control-Allow-Methods': 'POST, OPTIONS'
+                    },
+                    'body': json.dumps({
+                        'success': False,
+                        'error': f'Missing required field: {field}'
+                    })
+                }
+        
+        # Validate data types
+        try:
+            patient_data = {
+                'name': str(body['name']),
+                'age': int(float(body['age'])),
+                'sex': int(float(body['sex'])),
+                'trestbps': int(float(body['trestbps'])),
+                'chol': int(float(body['chol'])),
+                'fbs': int(float(body['fbs'])),
+                'thalach': int(float(body['thalach']))
+            }
+        except ValueError as e:
+            return {
+                    'statusCode': 400,
+                    'headers': {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Headers': 'Content-Type',
+                        'Access-Control-Allow-Methods': 'POST, OPTIONS'
+                    },
+                    'body': json.dumps({
+                        'success': False,
+                        'error': f'Invalid data format: {str(e)}'
+                    })
+                }
+        
+        # Get prediction
+        result = predict_heart_disease(patient_data)
+        
+        if 'error' in result:
+            return {
+                'statusCode': 500,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': 'Content-Type',
+                    'Access-Control-Allow-Methods': 'POST, OPTIONS'
+                },
+                'body': json.dumps({
+                    'success': False,
+                    'error': result['error']
+                })
+            }
+        
+        # Get AI treatment plan
+        treatment_plan = get_ai_treatment_plan(result['risk_score'], patient_data)
+        
+        # Determine risk level and styling
+        if result['risk_score'] >= 0.7:
+            risk_level = {
+                'level': 'High Risk',
+                'color': 'red',
+                'icon': 'fa-exclamation-circle',
+                'bg_color': 'bg-red-50',
+                'text_color': 'text-red-800',
+                'border_color': 'border-red-200'
+            }
+        elif result['risk_score'] >= 0.4:
+            risk_level = {
+                'level': 'Moderate Risk',
+                'color': 'yellow',
+                'icon': 'fa-exclamation-triangle',
+                'bg_color': 'bg-yellow-50',
+                'text_color': 'text-yellow-800',
+                'border_color': 'border-yellow-200'
+            }
         else:
-            data = event
-        
-        # Extract features in the correct order (removed thal, cp, restecg, oldpeak, slope, exang, ca)
-        features = [
-            float(data.get('age', 0)),
-            float(data.get('sex', 0)),
-            float(data.get('trestbps', 0)),
-            float(data.get('chol', 0)),
-            float(data.get('fbs', 0)),
-            float(data.get('thalach', 0))
-        ]
-        
-        # Get patient name for display
-        patient_name = data.get('name', 'Patient')
-        
-        # Get prediction (use SageMaker if available, otherwise local)
-        if USE_SAGEMAKER:
-            result = predict_heart_disease_sagemaker(features)
-        else:
-            result = predict_heart_disease_local(features)
-        
-        # Add additional information
-        result['risk_level'] = get_risk_level(result['risk_score'])
-        result['recommendations'] = get_recommendations(result['risk_score'], features)
-        result['ai_treatment_plan'] = get_ai_treatment_plan(result['risk_score'], features)
-        
-        # Log the result
-        print(f"Prediction result: {result}")
+            risk_level = {
+                'level': 'Low Risk',
+                'color': 'green',
+                'icon': 'fa-check-circle',
+                'bg_color': 'bg-green-50',
+                'text_color': 'text-green-800',
+                'border_color': 'border-green-200'
+            }
         
         return {
             'statusCode': 200,
@@ -302,32 +115,184 @@ def lambda_handler(event, context):
             },
             'body': json.dumps({
                 'success': True,
-                'prediction': result
+                'prediction': result['prediction'],
+                'risk_score': result['risk_score'],
+                'confidence': result['confidence'],
+                'risk_level': risk_level,
+                'patient_name': patient_data['name'],
+                'ai_treatment_plan': treatment_plan,
+                'timestamp': pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')
             })
         }
         
     except Exception as e:
-        # Log the error
-        print(f"Error processing request: {str(e)}")
-        
         return {
             'statusCode': 500,
             'headers': {
                 'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*'
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS'
             },
             'body': json.dumps({
                 'success': False,
-                'error': str(e)
+                'error': f'Prediction failed: {str(e)}'
             })
         }
 
-# Health check function for monitoring
-def health_check():
-    """Health check endpoint"""
+def predict_heart_disease(patient_data):
+    """Predict heart disease using simple rule-based logic"""
+    
+    try:
+        # Create input array in the correct order
+        input_data = np.array([[
+            patient_data['age'],
+            patient_data['sex'],
+            patient_data['trestbps'],
+            patient_data['chol'],
+            patient_data['fbs'],
+            patient_data['thalach']
+        ]])
+        
+        # Simple rule-based prediction (for demonstration)
+        # In production, this would use a trained ML model
+        
+        # Risk factors
+        risk_score = 0.0
+        
+        # Age risk
+        if patient_data['age'] > 65:
+            risk_score += 0.2
+        elif patient_data['age'] > 55:
+            risk_score += 0.1
+        
+        # Gender risk (male = 1)
+        if patient_data['sex'] == 1:
+            risk_score += 0.1
+        
+        # Blood pressure risk
+        if patient_data['trestbps'] > 140:
+            risk_score += 0.15
+        elif patient_data['trestbps'] > 130:
+            risk_score += 0.1
+        
+        # Cholesterol risk
+        if patient_data['chol'] > 240:
+            risk_score += 0.2
+        elif patient_data['chol'] > 200:
+            risk_score += 0.1
+        
+        # Blood sugar risk
+        if patient_data['fbs'] == 1:
+            risk_score += 0.15
+        
+        # Heart rate risk
+        if patient_data['thalach'] < 100 or patient_data['thalach'] > 160:
+            risk_score += 0.1
+        
+        # Normalize risk score to 0-1 range
+        risk_score = min(risk_score, 0.95)
+        
+        # Make prediction
+        prediction = 1 if risk_score > 0.5 else 0
+        
+        # Calculate confidence
+        confidence = 0.5 + abs(risk_score - 0.5) * 0.4
+        
+        return {
+            'prediction': int(prediction),
+            'risk_score': round(risk_score, 3),
+            'confidence': round(confidence, 3)
+        }
+        
+    except Exception as e:
+        return {
+            'prediction': 0,
+            'risk_score': 0.0,
+            'confidence': 0.0,
+            'error': str(e)
+        }
+
+def get_ai_treatment_plan(risk_score, patient_data):
+    """Generate AI-powered treatment recommendations based on risk score and patient data"""
+    
+    age = patient_data.get('age', 50)
+    sex = patient_data.get('sex', 1)
+    bp = patient_data.get('trestbps', 120)
+    cholesterol = patient_data.get('chol', 200)
+    
+    recommendations = []
+    
+    if risk_score >= 0.7:
+        recommendations.extend([
+            "🏥 Immediate Medical Consultation Required",
+            "📞 Schedule appointment with cardiologist within 48 hours",
+            "🚑 Consider emergency room if experiencing chest pain, shortness of breath, or dizziness",
+            "💊 Begin statin therapy immediately",
+            "🩺 Start low-dose aspirin therapy (unless contraindicated)",
+            "🍎 Adopt heart-healthy diet: low sodium, low saturated fats, high fiber",
+            "🚫 Quit smoking immediately - smoking cessation programs available",
+            "🏃 Begin gentle cardiac rehabilitation program",
+            "📊 Monitor blood pressure twice daily",
+            "💤 Maintain healthy weight: BMI target 18.5-24.9",
+            "🩸 Consider coronary angiography for detailed assessment"
+        ])
+    elif risk_score >= 0.4:
+        recommendations.extend([
+            "🩺 Schedule cardiology consultation within 2 weeks",
+            "📋 Begin moderate exercise program: 30 minutes, 5 days/week",
+            "🍎 Mediterranean diet recommended: fruits, vegetables, whole grains, olive oil",
+            "💊 Consider cholesterol-lowering medication (statins)",
+            "📊 Weekly blood pressure monitoring",
+            "🚭 Reduce alcohol consumption to moderate levels",
+            "🏃 Stress management techniques: meditation, yoga, deep breathing",
+            "💤 Weight management: 5-10% weight reduction if overweight",
+            "🩸 Consider stress test for baseline assessment"
+        ])
+    else:
+        recommendations.extend([
+            "🩺 Annual cardiology check-up recommended",
+            "🏃 Regular aerobic exercise: 150 minutes/week moderate intensity",
+            "🍎 Plant-based diet with limited processed foods",
+            "📊 Quarterly blood pressure and cholesterol checks",
+            "🚫 Maintain healthy weight through balanced diet and exercise",
+            "🧘 Limit sodium intake to <2,300mg/day",
+            "🍷 Increase omega-3 fatty acids: fish, nuts, seeds",
+            "💤 Adequate sleep: 7-9 hours per night",
+            "🩸 Consider cardiac calcium scan for baseline"
+        ])
+    
+    age_specific = []
+    if age >= 65:
+        age_specific.extend([
+            "👴 Senior cardiac care program recommended",
+            "💊 Medication review for potential interactions",
+            "🏃 Low-impact exercises: swimming, stationary cycling",
+            "📋 Fall prevention strategies and home safety assessment"
+        ])
+    elif age >= 45:
+        age_specific.extend([
+            "📊 Comprehensive metabolic panel recommended",
+            "🩸 Consider coronary calcium scoring",
+            "💊 Discuss preventive aspirin therapy"
+        ])
+    
     return {
-        'status': 'healthy',
-        'timestamp': datetime.now().isoformat(),
-        'version': '1.0.0',
-        'service': 'heart-disease-prediction'
+        "risk_level": "High" if risk_score >= 0.7 else "Medium" if risk_score >= 0.4 else "Low",
+        "recommendations": recommendations + age_specific,
+        "lifestyle_changes": [
+            "🚫 Quit smoking completely",
+            "🍎 Adopt heart-healthy Mediterranean diet",
+            "🏃 Regular aerobic exercise (150 min/week)",
+            "📊 Daily blood pressure monitoring",
+            "💤 Maintain healthy BMI (18.5-24.9)",
+            "🧘 7-9 hours of quality sleep",
+            "🧘 Stress management through meditation/yoga"
+        ],
+        "follow_up": "Schedule follow-up in 3 months",
+        "emergency_contacts": [
+            "🚑 Emergency: 911 immediately",
+            "🏥 Cardiologist: [Your doctor's number]",
+            "📞 Primary Care: [Your doctor's number]"
+        ]
     }
